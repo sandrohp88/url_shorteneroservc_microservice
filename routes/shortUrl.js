@@ -15,16 +15,15 @@ const UrlSchema = new Schema(
 const Url = mongoose.model('Url', UrlSchema)
 
 router
-  .post('/new', async function(req, res, next) {
+  .post('/new', function(req, res, next) {
     const { url } = req.body
-    // TODO verify url
-    dns.lookup(url.split('//')[1], (error, addresses, family) => {
-      console.log(error)
+    //  verify url
+    dns.lookup(url.split('//')[1], async (error, addresses, family) => {
       if (error) return res.send({ error: 'invalid URL' })
+      const newUrl = new Url({ original: url })
+      const response = await newUrl.save()
+      res.send({ original_url: response.original, short_url: response._id })
     })
-    const newUrl = new Url({ original: url })
-    const response = await newUrl.save()
-    res.send({ original_url: response.original, short_url: response._id })
   })
   .route('/:id')
   .get((req, res, next) => {
