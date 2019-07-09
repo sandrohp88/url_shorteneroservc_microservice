@@ -29,9 +29,9 @@ router
   .get((req, res, next) => {
     const id = req.params.id
     Url.findById(id, (err, url) => {
-      if (err) return console.log(err)
-      res.send(url)
-      console.log(url.original)
+      if (err) res.send({ error: 'invalid ID' })
+      res.redirect(url.original)
+      // console.log(url.original)
     })
   })
 module.exports = router
